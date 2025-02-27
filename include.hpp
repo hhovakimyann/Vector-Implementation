@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <iterator>
 #include <cstddef>        
 #include <initializer_list>
 #include <stdexcept>      
@@ -9,7 +10,9 @@
 #include <limits>
 
 namespace my_std {
+
 template<typename T>
+
 class Vector {
 public:
     // Member Types
@@ -20,6 +23,13 @@ public:
     using const_reference = const value_type&;
     using pointer = value_type*;
     using const_pointer = const value_type*;
+
+
+    // Iterators class forward declaration
+    class iterator; // ++
+    class const_iterator; // ++
+    class reverse_iterator;
+    class const_reverse_iterator;
 
     // Constructors and Destructor
 
@@ -52,24 +62,24 @@ public:
     pointer data() noexcept; // ++
     const_pointer data() const noexcept; //++
 
-    pointer begin(); //++
-    const_pointer begin() const; //++
-    const_pointer cbegin() const noexcept; //++
-
-
-    pointer end() noexcept; //++
-    const_pointer end() const noexcept; //++
-    const_pointer cend() const noexcept; //++
-
     // Iterators
 
-    pointer rbegin() noexcept; //++
-    const_pointer rbegin() const noexcept; //++
-    const_pointer crbegin() const noexcept; //++
+    iterator begin() noexcept; //++
+    const_iterator begin() const noexcept; //++
+    const_iterator cbegin() const noexcept; // ++
 
-    pointer rend() noexcept; //++
-    const_pointer rend() const noexcept; //++
-    const_pointer crend() const noexcept; //++
+
+    iterator end() noexcept; //++
+    const_iterator end() const noexcept; //++
+    const_iterator cend() const noexcept; //++
+
+    reverse_iterator rbegin() noexcept; 
+    const_reverse_iterator rbegin() const noexcept; 
+    const_reverse_iterator crbegin() const noexcept; 
+
+    reverse_iterator rend() noexcept; 
+    const_reverse_iterator rend() const noexcept; 
+    const_reverse_iterator crend() const noexcept; 
 
     // Capacity
     bool empty() const noexcept; // ++
@@ -132,6 +142,180 @@ private:
     // void destroy_elements();
     // void copy_from(const Vector& other);
     // void move_from(Vector&& other) noexcept;
+};
+
+
+
+template <class T>
+class Vector<T>::iterator {
+public:
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type = T;
+    using difference_type = std::ptrdiff_t;
+    using pointer = T*;
+    using reference = T&;
+
+    iterator() : current(nullptr) {}
+    iterator(pointer ptr) : current(ptr) {}
+
+    const_reference operator*() const { return *current;}
+    const_pointer operator->()  const{return current;}
+
+    reference operator*()  { return *current;}
+    pointer operator->()  {return current;}
+
+    iterator& operator++() { current++; return *this;}
+    iterator& operator--() { current--; return *this;}
+
+    iterator operator++(int) { iterator tmp(*this); current++; return tmp; }
+    iterator operator--(int) { iterator tmp(*this);current--; return tmp; }
+
+    iterator& operator+=(difference_type offset) {current += offset; return *this;}
+    iterator& operator-=(difference_type offset) {current -= offset; return *this;}
+
+    iterator operator-(difference_type offset) {return iterator(current - offset);}
+    iterator operator+(difference_type offset) {return iterator(current + offset);}
+
+    reference operator[](difference_type offset) {return *(current + offset);}
+
+    bool operator==(const iterator& other) const{return other.current == current;}
+    bool operator!=(const iterator& other) const{return other.current != current;}
+    bool operator>(const iterator& other)const { return current > other.current; }
+    bool operator<(const iterator& other) const{return other.current < current;}
+    bool operator<=(const iterator& other) const{return other.current <= current;}
+    bool operator>=(const iterator& other) const {return other.current >= current;}
+
+private:
+    pointer current;
+};
+
+template <class T>
+class Vector<T>::const_iterator {
+public:
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type = T;
+    using difference_type = std::ptrdiff_t;
+    using pointer = T*;
+    using reference = T&;
+
+    const_iterator() : current(nullptr) {}
+    const_iterator(pointer ptr) : current(ptr) {}
+
+    const_reference operator*() const { return *current;}
+    const_pointer operator->()  const{ return current;}
+
+    // reference operator*()  { return *current};
+    // pointer operator->()  {return current};
+
+    const_iterator& operator++() { current++; return *this;}
+    const_iterator& operator--() { current--; return *this;}
+
+    const_iterator operator++(int) { const_iterator tmp(*this);current++; return tmp;}
+    const_iterator operator--(int) { const_iterator tmp(*this);current--; return tmp;}
+
+    const_iterator& operator+=(difference_type offset) {current += offset; return *this;}
+    const_iterator& operator-=(difference_type offset) {current -= offset; return *this;}
+
+    const_iterator operator-(difference_type offset) {return const_iterator(current - offset);}
+    const_iterator operator+(difference_type offset) {return const_iterator(current + offset);}
+
+    reference operator[](difference_type offset) {return *(current + offset);}
+
+    bool operator==(const const_iterator& other) const {return other.current == current;}
+    bool operator!=(const const_iterator& other) const {return other.current != current;}
+    bool operator>(const const_iterator& other) const {return other.current > current;}
+    bool operator<(const const_iterator& other) const {return other.current < current;}
+    bool operator<=(const const_iterator& other) const {return other.current <= current;}
+    bool operator>=(const const_iterator& other) const {return other.current >= current;}
+
+private:
+    pointer current;
+};
+
+
+
+template<typename T>
+class Vector<T>::reverse_iterator {
+public:
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type = T;
+    using difference_type = std::ptrdiff_t;
+    using pointer = T*;
+    using reference = T&;
+
+    reverse_iterator(pointer ptr = nullptr) : m_ptr(ptr) {}
+
+    const_reference operator*() const { return *m_ptr; }
+    reference operator*() { return *m_ptr; }
+    pointer operator->() { return m_ptr; }
+    const_pointer operator->() const { return m_ptr; }
+
+    reverse_iterator& operator++() { --m_ptr; return *this; }
+    reverse_iterator operator++(int) { reverse_iterator temp = *this; --(*this); return temp; }
+
+    reverse_iterator& operator--() { ++m_ptr; return *this; }
+    reverse_iterator operator--(int) { reverse_iterator temp = *this; ++(*this); return temp; }
+
+    reverse_iterator operator+(difference_type n) const { return reverse_iterator(m_ptr - n); }
+    reverse_iterator operator-(difference_type n) const { return reverse_iterator(m_ptr + n); }
+
+    difference_type operator-(const reverse_iterator& other) const { return other.m_ptr - m_ptr; }
+
+    reverse_iterator& operator+=(difference_type n) { m_ptr -= n; return *this; }
+    reverse_iterator& operator-=(difference_type n) { m_ptr += n; return *this; }
+
+    reference operator[](difference_type n) const { return *(m_ptr - n); }
+
+    bool operator==(const reverse_iterator& other) const { return m_ptr == other.m_ptr; }
+    bool operator!=(const reverse_iterator& other) const { return m_ptr != other.m_ptr; }
+    bool operator<(const reverse_iterator& other) const { return m_ptr > other.m_ptr; }
+    bool operator>(const reverse_iterator& other) const { return m_ptr < other.m_ptr; }
+    bool operator<=(const reverse_iterator& other) const { return m_ptr >= other.m_ptr; }
+    bool operator>=(const reverse_iterator& other) const { return m_ptr <= other.m_ptr; }
+
+private:
+    pointer m_ptr;
+};
+
+template<typename T>
+class Vector<T>::const_reverse_iterator {
+public:
+    using iterator_category = std::random_access_iterator_tag;
+    using value_type = T;
+    using difference_type = std::ptrdiff_t;
+    using pointer = const T*;
+    using reference = const T&;
+
+    const_reverse_iterator(pointer ptr = nullptr) : m_ptr(ptr) {}
+
+    const_reference operator*() const { return *m_ptr; }
+    const_pointer operator->() const { return m_ptr; }
+
+    const_reverse_iterator& operator++() { --m_ptr; return *this; }
+    const_reverse_iterator operator++(int) { const_reverse_iterator temp = *this; --(*this); return temp; }
+
+    const_reverse_iterator& operator--() { ++m_ptr; return *this; }
+    const_reverse_iterator operator--(int) { const_reverse_iterator temp = *this; ++(*this); return temp; }
+
+    const_reverse_iterator operator+(difference_type n) const { return const_reverse_iterator(m_ptr - n); }
+    const_reverse_iterator operator-(difference_type n) const { return const_reverse_iterator(m_ptr + n); }
+
+    difference_type operator-(const const_reverse_iterator& other) const { return other.m_ptr - m_ptr; }
+
+    const_reverse_iterator& operator+=(difference_type n) { m_ptr -= n; return *this; }
+    const_reverse_iterator& operator-=(difference_type n) { m_ptr += n; return *this; }
+
+    reference operator[](difference_type n) const { return *(m_ptr - n); }
+
+    bool operator==(const const_reverse_iterator& other) const { return m_ptr == other.m_ptr; }
+    bool operator!=(const const_reverse_iterator& other) const { return m_ptr != other.m_ptr; }
+    bool operator<(const const_reverse_iterator& other) const { return m_ptr > other.m_ptr; }
+    bool operator>(const const_reverse_iterator& other) const { return m_ptr < other.m_ptr; }
+    bool operator<=(const const_reverse_iterator& other) const { return m_ptr >= other.m_ptr; }
+    bool operator>=(const const_reverse_iterator& other) const { return m_ptr <= other.m_ptr; }
+
+private:
+    pointer m_ptr;
 };
 
 } // namespace my_std

@@ -112,65 +112,65 @@ typename Vector<T>::reference Vector<T>::at(size_type pos) { // give element int
     return m_data[pos];
 }
 
-template <typename T>
-typename Vector<T>::pointer Vector<T>::begin() {
-    if(!empty()) {
-        std::out_of_range("No element");
-    }
-    return &m_data[0];
-}
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::begin() const{
-    if(!empty()) {
-        std::out_of_range("No element");
-    }
-    return &m_data[0];
-}
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::cbegin() const noexcept{
-    if(!empty()) {
-        std::out_of_range("No element");
-    }
-    return &m_data[0];
+template<typename T>
+typename Vector<T>::iterator Vector<T>::begin() noexcept {
+    return iterator(m_data);
 }
 
-template <typename T>
-typename Vector<T>::pointer Vector<T>::end() noexcept {
-    return &m_data[m_size];
-}
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::end()  const noexcept{
-    return &m_data[m_size];
-}
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::cend() const noexcept {
-    return &m_data[m_size];
+template<typename T>
+typename Vector<T>::const_iterator Vector<T>::begin() const noexcept {
+    return const_iterator(m_data);
 }
 
-template <typename T>
-typename Vector<T>::pointer Vector<T>::rbegin() noexcept {
-    return &m_data[m_size - 1]; 
-}
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::rbegin() const noexcept{
-    return &m_data[m_size - 1]; 
-}
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::crbegin() const noexcept {
-    return &m_data[m_size - 1]; 
+template<typename T>
+typename Vector<T>::const_iterator Vector<T>::cbegin() const noexcept {
+    return const_iterator(m_data);
 }
 
-template <typename T>
-typename Vector<T>::pointer Vector<T>::rend() noexcept {
-    return &m_data[-1]; 
+
+template<typename T>
+typename Vector<T>::iterator Vector<T>::end() noexcept {
+    return iterator(m_data + m_size);
 }
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::rend() const  noexcept{
-    return &m_data[-1]; 
+
+template<typename T>
+typename Vector<T>::const_iterator Vector<T>::end() const noexcept {
+    return const_iterator(m_data + m_size);
 }
-template <typename T>
-typename Vector<T>::const_pointer Vector<T>::crend() const noexcept {
-    return &m_data[-1]; 
+
+template<typename T>
+typename Vector<T>::const_iterator Vector<T>::cend() const noexcept {
+    return const_iterator(m_data + m_size);
+}
+
+template<typename T>
+typename Vector<T>::reverse_iterator Vector<T>::rbegin() noexcept {
+    return reverse_iterator(end());
+}
+
+template<typename T>
+typename Vector<T>::const_reverse_iterator Vector<T>::rbegin() const noexcept {
+    return const_reverse_iterator(end());
+}
+
+template<typename T>
+typename Vector<T>::const_reverse_iterator Vector<T>::crbegin() const noexcept {
+    return const_reverse_iterator(end());
+}
+
+template<typename T>
+typename Vector<T>::reverse_iterator Vector<T>::rend() noexcept {
+    return reverse_iterator(begin());
+}
+
+template<typename T>
+typename Vector<T>::const_reverse_iterator Vector<T>::rend() const noexcept {
+    return const_reverse_iterator(begin());
+}
+
+template<typename T>
+typename Vector<T>::const_reverse_iterator Vector<T>::crend() const noexcept {
+    return const_reverse_iterator(begin());
 }
 template <typename T>
 typename Vector<T>::const_reference Vector<T>::at(size_type pos) const { // give element int that position if invalid position give exertion using for const objects
